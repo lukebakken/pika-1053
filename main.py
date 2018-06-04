@@ -3,11 +3,16 @@
 
 import argparse
 import json
+import logging
 import signal
 import sys
 import time
 
 import producer
+
+
+LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) -35s %(lineno) -5d: %(message)s')
+LOGGER = logging.getLogger(__name__)
 
 
 print("__________________________________________")
@@ -23,12 +28,12 @@ parser.add_argument('-interval', default='300',         help='parsing interval')
 args = parser.parse_args()
 
 # RabbitMQ
-rmq_url = 'amqp://guest:guest@'+ args.rmq +':5672/%2F?heartbeat=0'
+# rmq_url = 'amqp://guest:guest@'+ args.rmq +':5672/%2F?heartbeat=0'
+rmq_url = 'amqp://guest:guest@'+ args.rmq +':5672/%2F'
 rmq_exchange = "erp"
 rmq_route_logs = "logs"
 
 rmq_client = producer.BlockingProducer(rmq_url, rmq_exchange)
-
 
 def rqm_send(msg):
     data = {
@@ -37,7 +42,6 @@ def rqm_send(msg):
     }
     rmq_client.publish(rmq_route_logs, json.dumps(data))
     print(data)
-
 
 
 """
@@ -57,9 +61,9 @@ signal.signal(signal.SIGTERM, finish)
 
 
 if __name__ == "__main__":
+    logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     rqm_send("Starting service with " + str(args))
     counter = 0
-
     while True:
         rqm_send("Executing #" + str(counter))
         counter += 1

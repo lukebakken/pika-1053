@@ -1,4 +1,6 @@
-class Producer(object):
+import pika
+
+class BlockingProducer(object):
     EXCHANGE_TYPE = "direct"
     EXCHANGE_DURABLE = True
 
