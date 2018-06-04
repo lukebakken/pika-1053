@@ -62,7 +62,14 @@ if __name__ == "__main__":
     logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
     rqm_send("Starting service with " + str(args))
     counter = 0
+    last_sent = time.time()
     while True:
-        rqm_send("Executing #" + str(counter))
-        counter += 1
-        time.sleep(float(args.interval))
+        now = time.time()
+        if ((now - last_sent) < float(args.interval)):
+            # This can sleep up to 10 seconds
+            rmq_client.process_data_events()
+        else:
+            # Time to send a message
+            rqm_send("Executing #" + str(counter))
+            counter += 1
+            last_sent = time.time()

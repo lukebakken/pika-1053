@@ -22,6 +22,9 @@ class BlockingProducer(object):
     def publish(self, route, data):
         self._channel.basic_publish(exchange=self._exchange, routing_key=route, body=data)
 
+    def process_data_events(self, time_limit=10):
+        self._connection.process_data_events(time_limit)
+
     def close(self):
             self._channel.close()
             self._connection.close()
