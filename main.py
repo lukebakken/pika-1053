@@ -10,13 +10,11 @@ import time
 
 import producer
 
-
 LOG_FORMAT = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) -35s %(lineno) -5d: %(message)s')
 LOGGER = logging.getLogger(__name__)
 
-
-print("__________________________________________")
-print("Starting service %s" % time.strftime("%c"))
+LOGGER.info("__________________________________________")
+LOGGER.info("Starting service %s" % time.strftime("%c"))
 
 # general
 service_name = "parser"
@@ -41,7 +39,7 @@ def rqm_send(msg):
         "msg": msg
     }
     rmq_client.publish(rmq_route_logs, json.dumps(data))
-    print(data)
+    LOGGER.info(data)
 
 
 """
@@ -50,7 +48,7 @@ def rqm_send(msg):
 
 
 def finish(signal_num, stack_frame):
-    print("Terminating service %s" % time.strftime("%c"))
+    LOGGER.info("Terminating service %s" % time.strftime("%c"))
     rqm_send("Terminating service %s" % time.strftime("%c"))
     rmq_client.close()
     sys.exit()

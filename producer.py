@@ -1,10 +1,14 @@
+import logging
 import pika
+
 
 class BlockingProducer(object):
     EXCHANGE_TYPE = "direct"
     EXCHANGE_DURABLE = True
 
     def __init__(self, url, exchange):
+        lf = ('%(levelname) -10s %(asctime)s %(name) -30s %(funcName) -35s %(lineno) -5d: %(message)s')
+        logging.basicConfig(level=logging.DEBUG, format=lf)
         self._connection = pika.BlockingConnection(pika.URLParameters(url))
         self._channel = self._connection.channel()
 
